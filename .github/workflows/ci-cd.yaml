@@ -1,0 +1,45 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main  
+  pull_request:
+    branches:
+      - main  
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'  
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run tests
+      run: |
+        # Add your test commands here
+        echo "No tests specified"
+
+    - name: Build Docker image (optional)
+      run: |
+        docker build -t my-flask-app .
+
+    # - name: Deploy to Appliku
+    #   env:
+    #     APPLIKU_API_KEY: ${{ secrets.APPLIKU_API_KEY }}
+    #   run: |
+    #     curl -X POST "https://api.appliku.com/v1/apps/deploy" \
+    #       -H "Authorization: Bearer $APPLIKU_API_KEY" \
+    #       -F "file=@Dockerfile" \
+    #       -F "file=@requirements.txt"
