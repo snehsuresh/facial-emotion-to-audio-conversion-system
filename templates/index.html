@@ -56,6 +56,8 @@
             <img id="video" src="{{ url_for('video_feed') }}" alt="Video Feed">
         </div>
         <button onclick="startCamera()">Start Camera</button>
+        <button onclick="stopCamera()">Stop Camera</button>
+        <button onclick="startPrediction()">Start Prediction</button>
         <button onclick="toggleMute()">Mute/Unmute</button>
     </div>
 
@@ -64,6 +66,24 @@
 
         function startCamera() {
             fetch('/start_camera')
+                .then(response => response.text())
+                .then(data => {
+                    console.log(data);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function stopCamera() {
+            fetch('/stop_camera')
+                .then(response => response.text())
+                .then(data => {
+                    console.log(data);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function startPrediction() {
+            fetch('/start_prediction')
                 .then(response => response.text())
                 .then(data => {
                     console.log(data);
