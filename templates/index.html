@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera UI</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #video-container {
+            width: 300px;
+            height: 300px;
+            margin-bottom: 20px;
+            border: 2px solid #ccc;
+            background: #000;
+            position: relative;
+            overflow: hidden;
+        }
+        #video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Facial Emotion to Audio Conversion</h1>
+        <div id="video-container">
+            <img id="video" src="{{ url_for('video_feed') }}" alt="Video Feed">
+        </div>
+        <button onclick="startCamera()">Start Camera</button>
+        <button onclick="toggleMute()">Mute/Unmute</button>
+    </div>
+
+    <script>
+        let isMuted = false;
+
+        function startCamera() {
+            fetch('/start_camera')
+                .then(response => response.text())
+                .then(data => {
+                    console.log(data);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function toggleMute() {
+            const video = document.getElementById('video');
+            isMuted = !isMuted;
+            video.muted = isMuted;
+            console.log(`Muted: ${isMuted}`);
+        }
+    </script>
+</body>
+</html>
