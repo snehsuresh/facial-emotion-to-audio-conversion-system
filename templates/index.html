@@ -129,8 +129,8 @@
                           img.style.display = 'block'; // Show the image
                       })
                       .catch(error => console.error('Error:', error));
-                }, 'image/jpeg');
-            }, 2000); // Adjust the interval as needed
+                }, 'image/jpeg', 0.1);
+            }, 2500); // Adjust the interval as needed
         }
 
         function predictEmotion() {
