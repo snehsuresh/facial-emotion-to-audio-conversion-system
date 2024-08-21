@@ -89,6 +89,9 @@
         <img id="processed-frame" />
     </div>
 
+    <!-- Audio element for playing sound -->
+    <audio id="speech-audio"></audio>
+
     <script>
         let video = document.querySelector("#videoelement");
         let canvas = document.createElement("canvas");
@@ -130,7 +133,14 @@
                       })
                       .catch(error => console.error('Error:', error));
                 }, 'image/jpeg', 0.1);
-            }, 2500); // Adjust the interval as needed
+            }, 2000); // Adjust the interval as needed
+        }
+
+        function playSpeech(text) {
+            const audioElement = document.getElementById('speech-audio');
+            // Set the audio source to the Flask route with the text
+            audioElement.src = `/speak/${encodeURIComponent(text)}`;
+            audioElement.play();
         }
 
         function predictEmotion() {
@@ -154,6 +164,9 @@
                 loadingIcon.style.display = 'none'; // Hide loading icon
                 loadingMessage.style.display = 'none'; // Hide loading message
                 firstRequest = false; // Set the flag to false after the first request
+
+                // Play sound based on detected emotion
+                playSpeech(`The person is ${data.emotion}`);
             })
             .catch(error => {
                 console.error('Error:', error);

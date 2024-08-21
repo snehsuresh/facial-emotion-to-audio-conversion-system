@@ -6,6 +6,8 @@ from expressiondetection.live.video_stream import (
     process_frame,
     predict_emotion_from_frame,
 )
+from gtts import gTTS
+import io
 
 app = Flask(__name__)
 
@@ -16,6 +18,15 @@ face_deque = collections.deque(maxlen=1)  # Only keep the most recent face
 @app.route("/")
 def index():
     return render_template("index.html")
+
+
+@app.route("/speak/<text>")
+def speak(text):
+    tts = gTTS(text, lang="en")
+    audio_stream = io.BytesIO()
+    tts.write_to_fp(audio_stream)
+    audio_stream.seek(0)
+    return Response(audio_stream, mimetype="audio/mpeg")
 
 
 @app.route("/process_frame", methods=["POST"])

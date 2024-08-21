@@ -1,7 +1,6 @@
 import cv2
 from collections import defaultdict
 from expressiondetection.yolo import yolo_detect
-from expressiondetection.utils.main_utils import speak_text
 
 
 def process_frame(frame):
@@ -51,9 +50,9 @@ def predict_emotion_from_frame(frame, face):
                 (0, 255, 0),
                 2,
             )
-            speak_text(f"The person is {detected_label}")
+            # a = speak_text(f"The person is {detected_label}")
             return detected_label
         else:
-            speak_text("Something's wrong")
+            return "I don't know!"
 
     return "No Expression"
