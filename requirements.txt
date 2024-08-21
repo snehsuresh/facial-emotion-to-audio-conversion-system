@@ -52,6 +52,7 @@ thop>=0.1.1  # FLOPs computation
 # pycocotools>=2.0  # COCO mAP
 # roboflow
 inference-sdk==0.16.2
+pygame
 
 
 -e .
