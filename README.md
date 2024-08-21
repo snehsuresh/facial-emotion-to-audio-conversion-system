@@ -56,15 +56,18 @@ Configure the necessary settings in `expressiondetection/config/model_config.py`
  ## Dependencies
 
  - OpenCV
- - gTTS
+ - Inference SDK
  - pygame
- - other libraries listed in `requirements.txt`
+ - Other libraries listed in `requirements.txt`
 
 ## Troubleshooting
 
  - Ensure your camera is properly connected and accessible.
  - Make sure all dependencies are installed correctly.
  - Check for any error messages and refer to the respective library documentation for troubleshooting.
+
+ ## To Do
+ - Incremental learning and fine-tuning the model by allowing users to label and train model.
 
  ## Contributing
 
