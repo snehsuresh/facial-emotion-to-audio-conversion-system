@@ -1,16 +1,11 @@
 from flask import Flask, render_template, Response, request, jsonify
-import threading
 import collections
 import cv2
 import numpy as np
-from io import BytesIO
 from expressiondetection.live.video_stream import (
     process_frame,
     predict_emotion_from_frame,
 )
-import threading
-import collections
-import cv2
 
 app = Flask(__name__)
 
@@ -46,7 +41,7 @@ def process_frame_route():
     return Response(frame_bytes, mimetype="image/jpeg")
 
 
-@app.route("/predict_emotion", methods=["GET"])
+@app.route("/predict_emotion", methods=["POST"])
 def predict_emotion_route():
     if len(frame_deque) == 0 or len(face_deque) == 0:
         return jsonify({"emotion": "No face available"})

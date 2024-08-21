@@ -1,6 +1,7 @@
 # Facial Emotion to Audio Conversion System
 
 This repository contains a real-time facial emotion detection system that converts detected emotions into audio feedback. It uses YOLO for emotion detection and various text-to-speech techniques to provide spoken feedback.
+Go to feature branch for deployed app.
 
 ## Features
 
@@ -8,6 +9,7 @@ This repository contains a real-time facial emotion detection system that conver
 - Audio feedback for detected emotions.
 - Optimized for real-time performance.
 - Configurable detection intervals and audio playback.
+- Go to feature branch for deployed app
 
 ## Installation
 
@@ -40,7 +42,6 @@ This repository contains a real-time facial emotion detection system that conver
 
 Configure the necessary settings in `expressiondetection/config/model_config.py`:
 
- - `DETECTION_INTERVAL`: The time interval between consecutive detections.
  - API keys and other model configurations if applicable.
 
 ## Usage

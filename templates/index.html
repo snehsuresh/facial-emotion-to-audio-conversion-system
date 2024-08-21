@@ -35,6 +35,7 @@
             border-radius: 5px;
             cursor: pointer;
             margin: 5px;
+            position: relative;
         }
         button:hover {
             background-color: #0056b3;
@@ -50,6 +51,27 @@
             max-width: 100%;
             height: auto;
         }
+        /* Loading spinner styles */
+        .spinner {
+            border: 4px solid #f3f3f3; /* Light grey */
+            border-top: 4px solid #007bff; /* Blue */
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #loading-message {
+            display: none; /* Hide loading message initially */
+            margin-right: 35px; /* Space for spinner */
+        }
     </style>
 </head>
 <body>
@@ -58,7 +80,11 @@
         <div id="video-container">
             <video autoplay="true" id="videoelement"></video>
         </div>
-        <button onclick="predictEmotion()">Predict Emotion</button>
+        <button onclick="predictEmotion()">
+            Predict Emotion
+            <div id="loading-icon" class="spinner" style="display: none;"></div>
+        </button>
+        <div id="loading-message">Please wait while the model is loading...</div>
         <div id="emotion-result"></div>
         <img id="processed-frame" />
     </div>
@@ -67,6 +93,8 @@
         let video = document.querySelector("#videoelement");
         let canvas = document.createElement("canvas");
         let context = canvas.getContext("2d");
+
+        let firstRequest = true; // Flag to check if it's the first request
 
         if (navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia({ video: true }).then(function (stream) {
@@ -106,14 +134,33 @@
         }
 
         function predictEmotion() {
+            let loadingIcon = document.getElementById('loading-icon');
+            let loadingMessage = document.getElementById('loading-message');
+
+            if (firstRequest) {
+                loadingMessage.style.display = 'block'; // Show loading message
+            } else {
+                loadingMessage.style.display = 'none'; // Hide loading message
+            }
+
+            loadingIcon.style.display = 'block'; // Show loading icon
+
             fetch('/predict_emotion', {
-                method: 'GET' // Ensure that the request method is POST
+                method: 'POST' // Ensure that the request method is POST
             })
             .then(response => response.json())
             .then(data => {
                 document.getElementById('emotion-result').innerText = `Emotion: ${data.emotion}`;
+                loadingIcon.style.display = 'none'; // Hide loading icon
+                loadingMessage.style.display = 'none'; // Hide loading message
+                firstRequest = false; // Set the flag to false after the first request
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => {
+                console.error('Error:', error);
+                loadingIcon.style.display = 'none'; // Hide loading icon on error
+                loadingMessage.style.display = 'none'; // Hide loading message on error
+                firstRequest = false; // Ensure flag is updated even on error
+            });
         }
     </script>
 </body>
