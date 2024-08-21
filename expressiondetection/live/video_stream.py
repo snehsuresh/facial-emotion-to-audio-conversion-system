@@ -9,20 +9,29 @@ def process_frame(frame):
         cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
     )
 
+    gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # Convert frame to grayscale
+
     faces = face_cascade.detectMultiScale(
-        frame, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30)
+        gray_frame, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30)
     )
+    # print("Faces detected:", faces)
+
+    # if len(faces) == 0:
+    #     # print("No faces detected")
 
     for x, y, w, h in faces:
         # Draw rectangle around the face
+        # print(f"Drawing rectangle at ({x}, {y}), width {w}, height {h}")
         cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
+
+    # Display the image for debugging (optional, only works if you have a GUI)
 
     return frame, faces
 
 
 def predict_emotion_from_frame(frame, face):
     detection_counts = defaultdict(int)
-
+    print("Predicting emotion==")
     for x, y, w, h in face:
         face_region = frame[y : y + h, x : x + w]
         detected_label = yolo_detect(face_region)

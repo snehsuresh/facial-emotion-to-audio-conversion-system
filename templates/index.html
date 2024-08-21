@@ -21,18 +21,10 @@
             align-items: center;
         }
         #video-container {
-            width: 300px;
-            height: 300px;
-            margin-bottom: 20px;
-            border: 2px solid #ccc;
-            background: #000;
-            position: relative;
-            overflow: hidden;
+            display: none; /* Hide video container */
         }
         #video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            display: none; /* Hide video element */
         }
         button {
             padding: 10px 20px;
@@ -52,46 +44,76 @@
             font-size: 20px;
             color: #333;
         }
+        #processed-frame {
+            display: none; /* Hide processed frame initially */
+            margin-top: 20px;
+            max-width: 100%;
+            height: auto;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Facial Emotion to Audio Conversion</h1>
         <div id="video-container">
-            <img id="video" src="{{ url_for('video_feed') }}" alt="Video Feed">
+            <video autoplay="true" id="videoelement"></video>
         </div>
-        <button onclick="startCamera()">Start Camera</button>
         <button onclick="predictEmotion()">Predict Emotion</button>
-        <button onclick="toggleMute()">Mute/Unmute</button>
         <div id="emotion-result"></div>
+        <img id="processed-frame" />
     </div>
 
     <script>
-        let isMuted = false;
+        let video = document.querySelector("#videoelement");
+        let canvas = document.createElement("canvas");
+        let context = canvas.getContext("2d");
 
-        function startCamera() {
-            fetch('/start_camera')
-                .then(response => response.text())
-                .then(data => {
-                    console.log(data);
-                })
-                .catch(error => console.error('Error:', error));
+        if (navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: true }).then(function (stream) {
+                video.srcObject = stream;
+                video.onloadedmetadata = function () {
+                    video.play();
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    startCapturing();
+                };
+            }).catch(function (error) {
+                console.log("Something went wrong", error);
+            });
+        } else {
+            console.log("getUserMedia not supported");
+        }
+
+        function startCapturing() {
+            setInterval(() => {
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                canvas.toBlob(blob => {
+                    let formData = new FormData();
+                    formData.append('video_frame', blob);
+
+                    fetch('/process_frame', {
+                        method: 'POST',
+                        body: formData
+                    }).then(response => response.blob()) // Handle response as blob
+                      .then(blob => {
+                          let img = document.getElementById('processed-frame');
+                          img.src = URL.createObjectURL(blob); // Create URL for image blob
+                          img.style.display = 'block'; // Show the image
+                      })
+                      .catch(error => console.error('Error:', error));
+                }, 'image/jpeg');
+            }, 100); // Adjust the interval as needed
         }
 
         function predictEmotion() {
-            fetch('/predict_emotion')
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('emotion-result').innerText = `Emotion: ${data.emotion}`;
-                })
-                .catch(error => console.error('Error:', error));
-        }
-
-        function toggleMute() {
-            const video = document.getElementById('video');
-            isMuted = !isMuted;
-            video.muted = isMuted;
-            console.log(`Muted: ${isMuted}`);
+            fetch('/predict_emotion', {
+                method: 'GET' // Ensure that the request method is POST
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('emotion-result').innerText = `Emotion: ${data.emotion}`;
+            })
+            .catch(error => console.error('Error:', error));
         }
     </script>
 </body>
