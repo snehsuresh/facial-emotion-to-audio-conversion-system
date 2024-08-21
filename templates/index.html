@@ -47,6 +47,11 @@
         button:hover {
             background-color: #0056b3;
         }
+        #emotion-result {
+            margin-top: 20px;
+            font-size: 20px;
+            color: #333;
+        }
     </style>
 </head>
 <body>
@@ -56,9 +61,9 @@
             <img id="video" src="{{ url_for('video_feed') }}" alt="Video Feed">
         </div>
         <button onclick="startCamera()">Start Camera</button>
-        <button onclick="stopCamera()">Stop Camera</button>
-        <button onclick="startPrediction()">Start Prediction</button>
+        <button onclick="predictEmotion()">Predict Emotion</button>
         <button onclick="toggleMute()">Mute/Unmute</button>
+        <div id="emotion-result"></div>
     </div>
 
     <script>
@@ -73,20 +78,11 @@
                 .catch(error => console.error('Error:', error));
         }
 
-        function stopCamera() {
-            fetch('/stop_camera')
-                .then(response => response.text())
+        function predictEmotion() {
+            fetch('/predict_emotion')
+                .then(response => response.json())
                 .then(data => {
-                    console.log(data);
-                })
-                .catch(error => console.error('Error:', error));
-        }
-
-        function startPrediction() {
-            fetch('/start_prediction')
-                .then(response => response.text())
-                .then(data => {
-                    console.log(data);
+                    document.getElementById('emotion-result').innerText = `Emotion: ${data.emotion}`;
                 })
                 .catch(error => console.error('Error:', error));
         }
